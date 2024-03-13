@@ -15,12 +15,16 @@ let taskList = []
 let mode = 'all'
 let filterList = []
 
-addBtn.addEventListener('click',addTask)
+// addBtn.addEventListener('click',addTask)
 taskInput.addEventListener('focus',function(){taskInput.value=''})
-taskInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      addTask(event);
-      taskInput.value = ""; 
+taskInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        if (taskInput.value.trim() === "") {
+            alert("할 일을 입력하세요!");
+        } else {
+            addTask();
+            taskInput.value = ""; // 할 일 입력 후 입력란 비우기
+        }
     }
 });  
 
@@ -33,6 +37,14 @@ for(let i = 0; i<tabs.length; i++) {
           this.classList.add('active');
     })
 }
+
+addBtn.addEventListener('click', function(e) {
+    if (taskInput.value === "") {
+        alert("할 일을 입력하세요!");
+    } else {
+        addTask();
+    }
+});
 
 function addTask(){
     let task = {
@@ -65,8 +77,8 @@ function render(){
             <div class="task">
                 <div class="task-done">${list[i].taskContent}</div>
                 <div class="btn-box">
-                    <button onclick="toggleComplete('${list[i].id}')">완료</button>
-                    <button onclick="deleteTask('${list[i].id}')">삭제</button>
+                    <button class="ico-undo" onclick="toggleComplete('${list[i].id}')"><span class="material-symbols-outlined">undo</span></button>
+                    <button class="ico-del" onclick="deleteTask('${list[i].id}')"><span class="material-symbols-outlined">delete</span></button>
                 </div>
             </div>
         `
@@ -75,8 +87,8 @@ function render(){
             <div class="task">
                 <div>${list[i].taskContent}</div>
                 <div class="btn-box">
-                    <button onclick="toggleComplete('${list[i].id}')">완료</button>
-                    <button onclick="deleteTask('${list[i].id}')">삭제</button>
+                    <button class="ico-ok" onclick="toggleComplete('${list[i].id}')"><span class="material-symbols-outlined">check</span></button>
+                    <button class="ico-del" onclick="deleteTask('${list[i].id}')"><span class="material-symbols-outlined">delete</span></button>
                 </div>
             </div>
         `
@@ -88,7 +100,7 @@ function render(){
 }
 
 function toggleComplete(id){
-    console.log("id:", id);
+    // console.log("id:", id);
     for(let i =0; i < taskList.length; i++) {
         if(taskList[i].id == id) {
             // taskList[i].isComplete = true; 
@@ -105,10 +117,12 @@ function deleteTask(id){
     for(let i = 0; i < taskList.length; i++){
         if(taskList[i].id == id){
             taskList.splice(i,1)
+            alert("정말 삭제하시겠습니까?")
+            filter({ target: { id: mode } });
             break
         }
     }
-    render()
+    // render()
     // console.log(taskList)
 }
 
@@ -129,7 +143,7 @@ function filter(e){
             }         
         }
         render()
-        console.log("진행중",filterList)
+        // console.log("진행중",filterList)
     } else if(mode ==="done"){
         // 완료 된 리스트를 보여줌
         // task.isComplete = true
